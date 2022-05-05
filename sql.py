@@ -23,7 +23,7 @@ while True:
                 database= "temps")
 
     cur = conn.cursor()
-s
+
     print("Measuring temperature...")
     sql= "INSERT INTO temps (entry, temp1, temp2, temp3) VALUES (?,?,?,?)"
     rand1= random.randint(0,100) # change to temp sensor take
