@@ -18,7 +18,7 @@ while True:
     password = os.environ.get("password")
 
     conn = db.connect(user='zeek',
-                password= 'syzygy',
+                password= 'XXXXXX',
                 host= "localhost",
                 database= "temps")
 
