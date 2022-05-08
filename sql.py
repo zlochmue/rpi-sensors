@@ -8,7 +8,7 @@ from weath import get_current_temp
 start_time = time.time()
 start_now = datetime.now()
 while True:
-    # scans once every sec_between_scan seconds 
+    # scans temp once every sec_between_scan seconds 
     sec_between_scan = 30
     time.sleep(sec_between_scan- time.time() % sec_between_scan)
     print("Connecting to Database...")
