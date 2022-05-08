@@ -30,6 +30,7 @@ while True:
     rand2= random.randint(0,100) # change to temp sensor take
     curr = get_current_temp()
     data= (formatted_date, rand1, rand2, curr)
+    
     print("Sending data...")
     cur.execute(sql, data)
 
