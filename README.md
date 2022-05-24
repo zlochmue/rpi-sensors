@@ -1,2 +1,3 @@
 # rpi-sensors
-initial sql database setup with randomized inputs
+
+Sends temp sensor data from raspberry pi to mariadb database 
