@@ -2,39 +2,44 @@ import os
 import mariadb as db
 import time
 from datetime import datetime
-import random
+from random import randint
 from weath import get_current_temp
+from measure import get_sensor_temp
 
 start_time = time.time()
 start_now = datetime.now()
+username = os.environ.get("username")
+password = os.environ.get("password")
+
 while True:
-    # scans temp once every sec_between_scan seconds 
-    sec_between_scan = 30
+    # scans temp once every sec_between_scan seconds
+    sec_between_scan = 300
     time.sleep(sec_between_scan- time.time() % sec_between_scan)
-    print("Connecting to Database...")
+    # Connecting to Database
     start_now = datetime.now()
     formatted_date = start_now.strftime('%Y-%m-%d %H:%M:%S')
-    username = os.environ.get("username")
-    password = os.environ.get("password")
 
-    conn = db.connect(user='zeek',
-                password= 'XXXXXX',
-                host= "localhost",
+    conn = db.connect(user=username,
+                password=password,
+                host= "127.0.0.1",
                 database= "temps")
 
     cur = conn.cursor()
 
-    print("Measuring temperature...")
-    sql= "INSERT INTO temps (entry, temp1, temp2, temp3) VALUES (?,?,?,?)"
-    rand1= random.randint(0,100) # change to temp sensor take
-    rand2= random.randint(0,100) # change to temp sensor take
+    # Measuring temperature
+
     curr = get_current_temp()
-    data= (formatted_date, rand1, rand2, curr)
-    
-    print("Sending data...")
+    temp = get_sensor_temp()
+
+    data= (formatted_date, temp, curr)
+
+    # Sending data
+    sql= "INSERT INTO measurements (time, temp, curr_temp) VALUES (?,?,?)"
     cur.execute(sql, data)
 
     conn.commit()
+    
+    print(f"Scan: {formatted_date}, {temp}, {curr}") 
 
     cur.close()
     conn.close()
