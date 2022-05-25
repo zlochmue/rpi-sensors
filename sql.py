@@ -3,8 +3,7 @@ import mariadb as db
 import time
 from datetime import datetime
 from random import randint
-from weath import get_current_temp
-from measure import get_sensor_temp
+from measure import get_sensor_temp, get_API_temp
 
 start_time = time.time()
 start_now = datetime.now()
@@ -28,7 +27,7 @@ while True:
 
     # Measuring temperature
 
-    curr = get_current_temp()
+    curr = get_API_temp()
     temp = get_sensor_temp()
 
     data= (formatted_date, temp, curr)
