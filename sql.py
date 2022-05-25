@@ -2,7 +2,6 @@ import os
 import mariadb as db
 import time
 from datetime import datetime
-from random import randint
 from measure import get_sensor_temp, get_API_temp
 
 start_time = time.time()
