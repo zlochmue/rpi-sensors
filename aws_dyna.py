@@ -47,6 +47,7 @@ class DB(object):
 
 def main():
     counter = 0
+    print("Starting...")
     while True:
     # scans temp about once every sec_between_scan seconds
         sec_between_scan = 300

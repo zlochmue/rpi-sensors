@@ -10,6 +10,7 @@ username = os.environ.get("username")
 password = os.environ.get("password")
 
 while True:
+    print("Starting...")
     # scans temp once every sec_between_scan seconds
     sec_between_scan = 300
     time.sleep(sec_between_scan- time.time() % sec_between_scan)
