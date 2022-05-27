@@ -8,7 +8,7 @@ from measure import get_sensor_temp, get_API_temp
 
 class DB(object):
 
-    def __init__(self, name='temps'):
+    def __init__(self, name=''):
         self.name=name
 
         self.db = boto3.resource('dynamodb')
@@ -17,15 +17,17 @@ class DB(object):
         self.client = boto3.client('dynamodb')
 
     @property
-    def get(self):
-        response = self.table.get_item(
+    def get_all(self):
+        """response = self.table.get_item(
             Key=
             {
                 'id':"1"
             }
-        )
+        )"""
+        response = self.table.scan()
+        items = response['Items']
 
-        return response
+        return list(items)
 
     def put(self, id='' , temp='',atemp='',stamp=''):
         self.table.put_item(
@@ -50,7 +52,7 @@ def main():
     print("Starting...")
     while True:
     # scans temp about once every sec_between_scan seconds
-        sec_between_scan = 300
+        sec_between_scan = 1
         time.sleep(sec_between_scan- time.time() % sec_between_scan)
         # Connecting to Database
         obj = DB()
@@ -68,4 +70,5 @@ def main():
         counter += 1
         print(f"Scan: {counter}, {formatted_date}, {temp}, {apitemp}") 
 
-main()
+if __name__ == "__main__":
+    main()
