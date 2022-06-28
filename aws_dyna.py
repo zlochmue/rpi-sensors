@@ -7,10 +7,8 @@ class DB(object):
 
     def __init__(self, name='temps'):
         self.name=name
-
         self.db = boto3.resource('dynamodb')
         self.table = self.db.Table(name)
-
         self.client = boto3.client('dynamodb')
 
     @property
@@ -35,7 +33,6 @@ class DB(object):
                 'timestamp':stamp
             }
         )
-
 
     def delete(self,id=''):
         self.table.delete_item(Key={'id': id})
@@ -62,10 +59,11 @@ def main():
         apitemp = get_API_temp()
         temp = get_sensor_temp()
 
-        # Sending data
+        # Sending data to DB
         obj.put(id=str(counter), temp=str(temp), atemp=str(apitemp),stamp=str(formatted_date))
-        counter += 1
         print(f"Scan: {counter}, {formatted_date}, {temp}, {apitemp}") 
+        counter += 1
+        
 
 if __name__ == "__main__":
     main()
