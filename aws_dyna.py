@@ -1,14 +1,11 @@
-import os
-import sys
 import datetime
 import time
 import boto3
-import threading
 from measure import get_sensor_temp, get_API_temp
 
 class DB(object):
 
-    def __init__(self, name=''):
+    def __init__(self, name='temps'):
         self.name=name
 
         self.db = boto3.resource('dynamodb')
@@ -60,7 +57,7 @@ def main():
         start_now = datetime.datetime.now()
         formatted_date = start_now.strftime('%Y-%m-%d %H:%M:%S')
 
-        # Measuring temperature
+        # Measuring temperatures
 
         apitemp = get_API_temp()
         temp = get_sensor_temp()

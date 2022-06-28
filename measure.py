@@ -9,9 +9,7 @@ def get_sensor_temp():
 
     with open(device, "r") as f:
         lines = f.readlines()
-
-    while lines[0].strip()[-3:] != "YES":
-        lines = read_temp_raw()
+        f.close()
 
     equals_pos = lines[1].find("t=")
     if equals_pos != -1:
@@ -34,5 +32,5 @@ def get_API_temp():
     return float(y["main"]["temp"])
 
 if __name__ == "__main__":
-    print(get_sensor_temp())    
+    print(f"Sensor: {get_sensor_temp()} F\nOutdoorAPI: {get_API_temp()} F")    
 

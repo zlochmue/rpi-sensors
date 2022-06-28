@@ -1,9 +1,4 @@
 import aws_dyna
-import os
-import sys
-import datetime
-import time
-import boto3
 from dynamodb_json import json_util as json
 import pandas as pd
 import matplotlib.pyplot as plt
