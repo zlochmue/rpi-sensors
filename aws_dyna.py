@@ -13,12 +13,6 @@ class DB(object):
 
     @property
     def get_all(self):
-        """response = self.table.get_item(
-            Key=
-            {
-                'id':"1"
-            }
-        )"""
         response = self.table.scan()
         items = response['Items']
 
@@ -43,7 +37,6 @@ class DB(object):
 
 def main():
     counter = 0
-    print("Starting...")
     while True:
     # scans temp about once every sec_between_scan seconds
         sec_between_scan = 1
@@ -60,9 +53,10 @@ def main():
         temp = get_sensor_temp()
 
         # Sending data to DB
+        counter += 1
         obj.put(id=str(counter), temp=str(temp), atemp=str(apitemp),stamp=str(formatted_date))
         print(f"Scan: {counter}, {formatted_date}, {temp}, {apitemp}") 
-        counter += 1
+        
         
 
 if __name__ == "__main__":

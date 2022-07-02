@@ -15,12 +15,15 @@ def main():
     print(f"Sorted table\n {obj}")
     obj['temp'] = obj['temp'].astype(float)
     obj['api-temp'] = obj['api-temp'].astype(float)
+    
+    """
     obj.plot(x='timestamp', y = 'temp')
     print("plotting")
     plt.savefig('plot.png')
 
     obj.plot(x='timestamp', y = 'api-temp')
     plt.savefig('api-plot.png')
+    """
 
 
 if __name__ == "__main__":
