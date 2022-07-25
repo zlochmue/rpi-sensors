@@ -16,6 +16,7 @@ def main():
     obj['temp'] = obj['temp'].astype(float)
     obj['api-temp'] = obj['api-temp'].astype(float)
     
+    # plotting the data (under construction)
     """
     obj.plot(x='timestamp', y = 'temp')
     print("plotting")
