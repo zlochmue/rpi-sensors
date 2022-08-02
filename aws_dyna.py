@@ -4,57 +4,69 @@ import glob
 import requests
 import json
 
-def get_sensor_temp():   
-    device = glob.glob("/sys/bus/w1/devices/" + "28*")[0] + "/w1_slave"
+class RPIwrapper:
 
-    with open(device, "r") as f:
-        lines = f.readlines()
-        f.close()
+    def read_sensor_temp(self):   
+        device = glob.glob("/sys/bus/w1/devices/" + "28*")[0] + "/w1_slave"
 
-        equals_pos = lines[1].find("t=")
-        if equals_pos != -1:
-            temp_string = lines[1][equals_pos+2:]
-            temp = round(float(temp_string) / 1000.0, 2)
-            temp = ((temp*9)/5) + 32
-            temp = round(temp,2)
+        with open(device, "r") as f:
+            lines = f.readlines()
+            f.close()
 
-    return temp
+            equals_pos = lines[1].find("t=")
+            if equals_pos != -1:
+                temp_string = lines[1][equals_pos+2:]
+                temp = round(float(temp_string) / 1000.0, 2)
+                temp = ((temp*9)/5) + 32
+                temp = round(temp,2)
 
-def get_API_temp():
-    curr = 'https://api.openweathermap.org/data/2.5/weather?lat=41.87&lon=-87.62&appid=84105f1604d031a12cbcee0084df2326&units=imperial'
-    response = requests.get(curr)
-    y = response.json()
-    itera = json.dumps(y,indent=3)
-    y = json.loads(itera)
-    return float(y["main"]["temp"])
+        return temp
 
-def main():
-    counter = 0
-    while True:
-    # scans temp once every sec_between_scan seconds
-        sec_between_scan = 900
+    def get_API_temp(self, url):
+        response = requests.get(url)
+        y = response.json()
+        itera = json.dumps(y,indent=3)
+        y = json.loads(itera)
+        return float(y["main"]["temp"])
+
+    def post_temp_scan(self, id, url, temp, apitemp):
         start_now = datetime.datetime.now()
         formatted_date = start_now.strftime('%Y-%m-%d %H:%M:%S')
-
-        # Measuring temperatures
-
-        apitemp = get_API_temp()
-        temp = get_sensor_temp()
-        # check if temp/humidity is above certain levels and then signal 
-
-        # send temperature scan to dynamodb db
-        url = "https://jx7a1ot8db.execute-api.us-east-2.amazonaws.com/Post"
-        counter += 1
-        json_data = {"id" : str(counter),
+        
+        json_data = {"id" : str(id),
                     "time" : str(formatted_date),
                     "apitemp" : str(apitemp),
                     "temp" : str(temp)}
-        response = requests.post(url, json = json_data)
-        print(f"Scan: {counter}, {formatted_date}, {temp}, {apitemp}") 
 
-        time.sleep(sec_between_scan- time.time() % sec_between_scan)
+        print(f"Scan: {id}, {formatted_date}, {temp}, {apitemp}") 
+
+        return requests.post(url, json = json_data)
+
+    def run(self, sec_per_scan, postURL, weatherURL):
+        while True:
+            scanID = 0
+            apitemp = self.get_API_temp(weatherURL)
+            temp = self.read_sensor_temp()
+
+            response = self.post_temp_scan(scanID, postURL, temp, apitemp)
+            
+            scanID += 1
+            time.sleep(sec_per_scan - time.time() % sec_per_scan)
+
+
+
+
+
+def main():
+        RPI = RPIwrapper()
+
+        weatherURL = "https://api.openweathermap.org/data/2.5/weather?lat=41.87&lon=-87.62&appid=84105f1604d031a12cbcee0084df2326&units=imperial"
+        postURL = "https://jx7a1ot8db.execute-api.us-east-2.amazonaws.com/Post"
+        sec_per_scan = 900
+        
+        RPI.run(sec_per_scan, postURL, weatherURL)
         
         
-
+        
 if __name__ == "__main__":
     main()
