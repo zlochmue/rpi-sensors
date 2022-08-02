@@ -43,8 +43,8 @@ class RPIwrapper:
         return requests.post(url, json = json_data)
 
     def run(self, sec_per_scan, postURL, weatherURL):
+        scanID = 0
         while True:
-            scanID = 0
             apitemp = self.get_API_temp(weatherURL)
             temp = self.read_sensor_temp()
 
@@ -52,10 +52,6 @@ class RPIwrapper:
             
             scanID += 1
             time.sleep(sec_per_scan - time.time() % sec_per_scan)
-
-
-
-
 
 def main():
         RPI = RPIwrapper()
@@ -65,7 +61,6 @@ def main():
         sec_per_scan = 900
         
         RPI.run(sec_per_scan, postURL, weatherURL)
-        
         
         
 if __name__ == "__main__":
