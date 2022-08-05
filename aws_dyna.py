@@ -6,17 +6,22 @@ import json
 
 class RPIwrapper:
 
-    def run(self, sec_per_scan, postURL, weatherURL):
+    def __init__(self, postURL, weatherURL, sec_per_scan):
+        self.postURL = postURL
+        self.weatherURL = weatherURL
+        self.sec_per_scan = sec_per_scan
+
+    def run(self):
         scanID = 0
         while True:
-            apitemp = self.get_API_temp(weatherURL)
+            apitemp = self.get_API_temp(self.weatherURL)
             temp = self.read_sensor_temp()
 
-            response = self.post_temp_scan(scanID, postURL, temp, apitemp)
+            response = self.post_temp_scan(scanID, self.postURL, temp, apitemp)
             # add notifications/logging using response
 
             scanID += 1
-            time.sleep(sec_per_scan - time.time() % sec_per_scan)
+            time.sleep(self.sec_per_scan - time.time() % self.sec_per_scan)
 
     @staticmethod
     def read_sensor_temp():   
@@ -58,13 +63,14 @@ class RPIwrapper:
         return requests.post(url, json = json_data)
 
 def main():
-        RPI = RPIwrapper()
 
         weatherURL = "https://api.openweathermap.org/data/2.5/weather?lat=41.87&lon=-87.62&appid=84105f1604d031a12cbcee0084df2326&units=imperial"
         postURL = "https://jx7a1ot8db.execute-api.us-east-2.amazonaws.com/Post"
         sec_per_scan = 900
+
+        RPI = RPIwrapper(postURL, weatherURL, sec_per_scan)
         
-        RPI.run(sec_per_scan, postURL, weatherURL)
+        RPI.run()
         
         
 if __name__ == "__main__":
