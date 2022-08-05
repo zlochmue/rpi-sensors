@@ -6,7 +6,20 @@ import json
 
 class RPIwrapper:
 
-    def read_sensor_temp(self):   
+    def run(self, sec_per_scan, postURL, weatherURL):
+        scanID = 0
+        while True:
+            apitemp = self.get_API_temp(weatherURL)
+            temp = self.read_sensor_temp()
+
+            response = self.post_temp_scan(scanID, postURL, temp, apitemp)
+            # add notifications/logging using response
+
+            scanID += 1
+            time.sleep(sec_per_scan - time.time() % sec_per_scan)
+
+    @staticmethod
+    def read_sensor_temp():   
         device = glob.glob("/sys/bus/w1/devices/" + "28*")[0] + "/w1_slave"
 
         with open(device, "r") as f:
@@ -22,14 +35,16 @@ class RPIwrapper:
 
         return temp
 
-    def get_API_temp(self, url):
+    @staticmethod
+    def get_API_temp(url):
         response = requests.get(url)
         y = response.json()
         itera = json.dumps(y,indent=3)
         y = json.loads(itera)
         return float(y["main"]["temp"])
 
-    def post_temp_scan(self, id, url, temp, apitemp):
+    @staticmethod
+    def post_temp_scan(id, url, temp, apitemp):
         start_now = datetime.datetime.now()
         formatted_date = start_now.strftime('%Y-%m-%d %H:%M:%S')
         
@@ -41,17 +56,6 @@ class RPIwrapper:
         print(f"Scan: {id}, {formatted_date}, {temp}, {apitemp}") 
 
         return requests.post(url, json = json_data)
-
-    def run(self, sec_per_scan, postURL, weatherURL):
-        scanID = 0
-        while True:
-            apitemp = self.get_API_temp(weatherURL)
-            temp = self.read_sensor_temp()
-
-            response = self.post_temp_scan(scanID, postURL, temp, apitemp)
-            
-            scanID += 1
-            time.sleep(sec_per_scan - time.time() % sec_per_scan)
 
 def main():
         RPI = RPIwrapper()
