@@ -18,7 +18,7 @@ class RPIwrapper:
             temp = self.read_sensor_temp()
 
             response = self.post_temp_scan(scanID, self.postURL, temp, apitemp)
-            # add notifications/logging using response
+            # add notifications/logging using response (200 for success, 400 for error)
 
             scanID += 1
             time.sleep(self.sec_per_scan - time.time() % self.sec_per_scan)
@@ -63,7 +63,6 @@ class RPIwrapper:
         return requests.post(url, json = json_data)
 
 def main():
-
         weatherURL = "https://api.openweathermap.org/data/2.5/weather?lat=41.87&lon=-87.62&appid=84105f1604d031a12cbcee0084df2326&units=imperial"
         postURL = "https://jx7a1ot8db.execute-api.us-east-2.amazonaws.com/Post"
         sec_per_scan = 900
